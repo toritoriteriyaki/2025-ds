@@ -1,0 +1,131 @@
+はい、承知いたしました。先のHTML、CSS、JavaScriptを一つのHTMLファイルにまとめて、すぐにブラウザで動作確認できるようにします。
+
+以下のコードをコピーし、ファイル名に「.html」を付けて保存してください（例: rainbow_effect.html）。
+
+HTML
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ボタンで暗転し虹色に光るエフェクト</title>
+    
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #eee; /* 初期背景色 */
+            font-family: sans-serif;
+            overflow: hidden; /* スクロールバー非表示 */
+        }
+
+        #triggerButton {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #333;
+            color: white;
+            z-index: 10; /* オーバーレイより手前に表示 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        #triggerButton:hover {
+            background-color: #555;
+        }
+
+        /* -------------------- オーバーレイのスタイル -------------------- */
+
+        #overlay {
+            position: fixed; /* 画面全体を覆う */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0); /* 初期状態: 透明 */
+            z-index: 5; /* ボタンより奥に */
+            
+            /* 暗転（背景色の変化）を滑らかにするためのトランジション */
+            transition: background-color 2s ease-in-out; 
+            
+            /* 虹色グラデーションの設定 */
+            background-image: linear-gradient(90deg, 
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 100%; /* アニメーションのためにサイズを大きくしておく */
+            opacity: 0; /* 初期状態: 虹色は見えない */
+        }
+
+        /* -------------------- 暗転時のスタイル -------------------- */
+        #overlay.active-dark {
+            background-color: rgba(0, 0, 0, 1); /* 暗転 */
+        }
+
+        /* -------------------- 虹色光時のスタイル -------------------- */
+        #overlay.active-rainbow {
+            /* グラデーションをフェードインさせる */
+            opacity: 1; 
+            /* 虹色へのフェードイン時間を調整 */
+            transition: opacity 3s ease-in-out; 
+            
+            /* 虹色のアニメーションを開始 */
+            animation: rainbow-shift 10s linear infinite;
+        }
+
+        /* -------------------- 虹色アニメーションの定義 -------------------- */
+        @keyframes rainbow-shift {
+            0% {
+                background-position: 0% 50%; /* 左端から開始 */
+            }
+            100% {
+                background-position: 100% 50%; /* 右端へ移動 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay"></div>
+    <button id="triggerButton">エフェクト開始</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const button = document.getElementById('triggerButton');
+            const overlay = document.getElementById('overlay');
+
+            button.addEventListener('click', () => {
+                // ボタンを無効化し、テキストを変更
+                button.disabled = true;
+                button.textContent = '暗転中...';
+
+                // ステップ1: 画面を暗転させる (2秒かけて)
+                overlay.classList.add('active-dark');
+
+                const darkDuration = 2000; // CSSのtransition時間(2s)に合わせる
+
+                setTimeout(() => {
+                    // 暗転完了後、ボタンのテキストを変更
+                    button.textContent = '虹色にフェードイン...';
+
+                    // ステップ2: 虹色の光を徐々にフェードインさせる (3秒かけて)
+                    overlay.classList.add('active-rainbow');
+
+                    const rainbowDuration = 3000; // CSSのtransition時間(3s)に合わせる
+
+                    setTimeout(() => {
+                        button.textContent = 'エフェクト完了';
+                        // エフェクト終了後、ボタンを再度有効化したい場合は以下のコメントを外してください
+                        // button.disabled = false; 
+                    }, rainbowDuration);
+                    
+                }, darkDuration);
+            });
+        });
+    </script>
+</body>
+</html>
